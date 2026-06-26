@@ -202,7 +202,7 @@ document.getElementById("customerForm").addEventListener("submit", async event =
   };
 
   try {
-    const response = await fetch("https://TU-BACKEND-EN-RENDER.onrender.com/crear-preferencia", {
+    const response = await fetch("https://mujeresmillonarias.onrender.com/crear-preferencia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(order)
