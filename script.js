@@ -1,138 +1,227 @@
-require("dotenv").config();
-
-const express = require("express");
-const cors = require("cors");
-const { MercadoPagoConfig, Preference } = require("mercadopago");
-
-const app = express();
-
-const allowedOrigins = [
-  "https://casalmarinaandrea-ops.github.io",
-  "https://casalmarinaandrea-ops.github.io/mujeresmillonarias",
-  "http://127.0.0.1:5500",
-  "http://localhost:5500"
+const diaryPages = [
+  { src: "assets/diario_1.png", caption: "Página 1 de 8 · Portada" },
+  { src: "assets/diario_2.png", caption: "Página 2 de 8 · Cómo utilizar este diario" },
+  { src: "assets/diario_3.png", caption: "Página 3 de 8 · Consejos de uso" },
+  { src: "assets/diario_4.png", caption: "Página 4 de 8 · Meta del mes" },
+  { src: "assets/diario_5.png", caption: "Página 5 de 8 · Afirmaciones y positividad" },
+  { src: "assets/diario_6.png", caption: "Página 6 de 8 · Tareas del día" },
+  { src: "assets/diario_7.png", caption: "Página 7 de 8 · Cómo me siento" },
+  { src: "assets/diario_8.png", caption: "Página 8 de 8 · Análisis semanal" }
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
-      return callback(null, true);
-    }
-    return callback(new Error("Origen no permitido por CORS"));
+const products = [
+  {
+    id: 1,
+    name: "Diario de Gratitud PDF",
+    price: 40000,
+    image: "assets/diario_1.png",
+    description: "PDF imprimible con todas las páginas para agradecer, escribir afirmaciones, ordenar metas, registrar tareas y revisar tu semana."
+  },
+  {
+    id: 2,
+    name: "Taza Mujeres Millonarias",
+    price: 20000,
+    image: "assets/taza.png",
+    description: "Taza inspiracional con diseño lila y dorado. Ideal para acompañar tu café, té o rutina de journaling."
+  },
+  {
+    id: 3,
+    name: "Vela de Lavanda",
+    price: 25000,
+    image: "assets/vela.png",
+    description: "Vela aromática con aroma a lavanda, ideal para crear un ambiente de calma, gratitud y manifestación."
+  },
+  {
+    id: 4,
+    name: "Plancha de Stickers",
+    price: 5000,
+    image: "assets/stickers.png",
+    description: "Stickers para termo, computadora, agenda o cuaderno con frases de poder, abundancia y amor propio."
+  },
+  {
+    id: 5,
+    name: "Box Mujeres Millonarias",
+    price: 41000,
+    image: "assets/box.png",
+    description: "Box especial Mujeres Millonarias con estética premium para regalar o regalarte una experiencia de abundancia."
   }
-}));
+];
 
-app.use(express.json());
+let currentPage = 0;
+let cart = [];
 
-if (!process.env.MP_ACCESS_TOKEN) {
-  console.error("Falta MP_ACCESS_TOKEN en Render");
+const formatARS = value => new Intl.NumberFormat("es-AR", {
+  style: "currency",
+  currency: "ARS",
+  maximumFractionDigits: 0
+}).format(value);
+
+function updateDiaryPage() {
+  const page = diaryPages[currentPage];
+  document.getElementById("diaryPage").src = page.src;
+  document.getElementById("galleryCaption").textContent = page.caption;
+
+  document.querySelectorAll(".dot").forEach((dot, index) => {
+    dot.classList.toggle("active", index === currentPage);
+  });
 }
 
-const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN
+function renderDots() {
+  const dots = document.getElementById("dots");
+  dots.innerHTML = diaryPages.map((_, index) => `
+    <button class="dot ${index === currentPage ? "active" : ""}" onclick="goToPage(${index})" aria-label="Ir a página ${index + 1}"></button>
+  `).join("");
+}
+
+function goToPage(index) {
+  currentPage = index;
+  updateDiaryPage();
+}
+
+document.getElementById("prevPage").addEventListener("click", () => {
+  currentPage = (currentPage - 1 + diaryPages.length) % diaryPages.length;
+  updateDiaryPage();
 });
 
-app.get("/", (req, res) => {
-  res.json({
-    ok: true,
-    name: "Mujeres Millonarias Backend"
-  });
+document.getElementById("nextPage").addEventListener("click", () => {
+  currentPage = (currentPage + 1) % diaryPages.length;
+  updateDiaryPage();
 });
 
-app.post("/crear-preferencia", async (req, res) => {
+function renderProducts() {
+  const container = document.getElementById("productList");
+
+  container.innerHTML = products.map(product => `
+    <article class="product">
+      <img src="${product.image}" alt="${product.name}">
+      <h3>${product.name}</h3>
+      <p>${product.description}</p>
+      <div class="price">${formatARS(product.price)}</div>
+      <label class="qty">
+        Cantidad:
+        <input id="qty-${product.id}" type="number" min="1" value="1">
+      </label>
+      <button class="btn primary" onclick="addToCart(${product.id})">Agregar al carrito</button>
+    </article>
+  `).join("");
+}
+
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  const quantity = Math.max(1, parseInt(document.getElementById(`qty-${productId}`).value || "1", 10));
+
+  const existing = cart.find(item => item.id === productId);
+  if (existing) {
+    existing.quantity += quantity;
+  } else {
+    cart.push({ ...product, quantity });
+  }
+
+  renderCart();
+  document.getElementById("carrito").scrollIntoView({ behavior: "smooth" });
+}
+
+function removeFromCart(productId) {
+  cart = cart.filter(item => item.id !== productId);
+  renderCart();
+}
+
+function renderCart() {
+  const cartItems = document.getElementById("cartItems");
+  const cartCount = document.getElementById("cartCount");
+  const cartTotal = document.getElementById("cartTotal");
+
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  cartCount.textContent = totalItems;
+  cartTotal.textContent = formatARS(total);
+
+  if (cart.length === 0) {
+    cartItems.innerHTML = '<p class="empty">Tu carrito está vacío.</p>';
+    return;
+  }
+
+  cartItems.innerHTML = cart.map(item => `
+    <div class="cart-row">
+      <strong>${item.name}</strong>
+      <span>x ${item.quantity}</span>
+      <span>${formatARS(item.price * item.quantity)}</span>
+      <button onclick="removeFromCart(${item.id})">✕</button>
+    </div>
+  `).join("");
+}
+
+const modal = document.getElementById("customerModal");
+
+function openModal() {
+  modal.classList.add("show");
+  document.body.classList.add("modal-open");
+}
+
+function closeModal() {
+  modal.classList.remove("show");
+  document.body.classList.remove("modal-open");
+}
+
+document.getElementById("checkoutBtn").addEventListener("click", () => {
+  if (cart.length === 0) {
+    alert("Tu carrito está vacío.");
+    return;
+  }
+
+  openModal();
+});
+
+document.getElementById("closeModal").addEventListener("click", closeModal);
+
+modal.addEventListener("click", event => {
+  if (event.target === modal) closeModal();
+});
+
+document.getElementById("customerForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const customer = {
+    nombre: document.getElementById("firstName").value.trim(),
+    apellido: document.getElementById("lastName").value.trim(),
+    mail: document.getElementById("email").value.trim(),
+    celular: document.getElementById("phone").value.trim(),
+    direccion: {
+      calle: document.getElementById("street").value.trim(),
+      numero: document.getElementById("number").value.trim(),
+      localidad: document.getElementById("city").value.trim(),
+      codigoPostal: document.getElementById("zip").value.trim()
+    }
+  };
+
+  const order = {
+    customer,
+    cart,
+    total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  };
+
   try {
-    const { cart, customer } = req.body;
-
-    if (!Array.isArray(cart) || cart.length === 0) {
-      return res.status(400).json({ error: "Carrito vacío" });
-    }
-
-    if (!customer?.nombre || !customer?.apellido || !customer?.mail) {
-      return res.status(400).json({ error: "Datos de cliente incompletos" });
-    }
-
-    const preference = new Preference(client);
-
-    const result = await preference.create({
-      body: {
-        items: cart.map(item => ({
-          title: String(item.name),
-          quantity: Number(item.quantity),
-          unit_price: Number(item.price),
-          currency_id: "ARS"
-        })),
-
-        payer: {
-          name: customer.nombre,
-          surname: customer.apellido,
-          email: customer.mail,
-          phone: {
-            number: customer.celular || ""
-          },
-          address: {
-            street_name: customer.direccion?.calle || "",
-            street_number: Number(customer.direccion?.numero || 0),
-            zip_code: customer.direccion?.codigoPostal || ""
-          }
-        },
-
-        shipments: {
-          receiver_address: {
-            street_name: customer.direccion?.calle || "",
-            street_number: Number(customer.direccion?.numero || 0),
-            zip_code: customer.direccion?.codigoPostal || "",
-            city_name: customer.direccion?.localidad || ""
-          }
-        },
-
-        back_urls: {
-          success: "https://casalmarinaandrea-ops.github.io/mujeresmillonarias/",
-          failure: "https://casalmarinaandrea-ops.github.io/mujeresmillonarias/",
-          pending: "https://casalmarinaandrea-ops.github.io/mujeresmillonarias/"
-        },
-
-        auto_return: "approved",
-
-        notification_url: "https://mujeresmillonarias.onrender.com/webhook",
-
-        binary_mode: true,
-
-        metadata: {
-          customer_name: `${customer.nombre} ${customer.apellido}`,
-          customer_email: customer.mail,
-          customer_phone: customer.celular || "",
-          delivery_street: customer.direccion?.calle || "",
-          delivery_number: customer.direccion?.numero || "",
-          delivery_city: customer.direccion?.localidad || "",
-          delivery_zip: customer.direccion?.codigoPostal || ""
-        },
-
-        statement_descriptor: "MUJERES MILLON"
-      }
+    const response = await fetch("https://TU-BACKEND-EN-RENDER.onrender.com/crear-preferencia", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order)
     });
 
-    res.json({
-      init_point: result.init_point
-    });
+    const data = await response.json();
 
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert("No se pudo iniciar el pago. Escribinos por WhatsApp.");
+    }
   } catch (error) {
-    console.error("Error Mercado Pago:", error);
-    res.status(500).json({
-      error: "Error al crear la preferencia de pago"
-    });
+    console.error(error);
+    alert("Hubo un problema al conectar con Mercado Pago. Escribinos por WhatsApp.");
   }
 });
 
-app.post("/webhook", (req, res) => {
-  console.log("Webhook recibido:", req.body);
-  res.sendStatus(200);
-});
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Servidor funcionando en puerto ${PORT}`);
-});
-
-const BACKEND_URL = "https://mujeresmillonarias.onrender.com";
-
+renderDots();
+updateDiaryPage();
+renderProducts();
+renderCart();
