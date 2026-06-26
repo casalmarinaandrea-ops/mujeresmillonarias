@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mujeres Millonarias | Tienda Oficial</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="#inicio" class="logo">♕ Mujeres Millonarias</a>
+    <nav>
+      <a href="#diario">Diario</a>
+      <a href="#productos">Productos</a>
+      <a href="#testimonios">Testimonios</a>
+      <a href="#carrito" class="cart-pill">Carrito <span id="cartCount">0</span></a>
+    </nav>
+  </header>
+
+  <section class="hero" id="inicio">
+    <div class="hero-copy">
+      <span class="eyebrow">Gratitud · abundancia · propósito</span>
+      <h1>Tu ritual diario para elegirte, creer y construir.</h1>
+      <p>
+        Una colección creada para mujeres que quieren conectar con su poder personal,
+        organizar sus metas y manifestar una vida más abundante desde pequeños hábitos diarios.
+      </p>
+      <div class="hero-actions">
+        <a href="#productos" class="btn primary">Comprar ahora</a>
+        <a href="#diario" class="btn ghost">Ver páginas del diario</a>
+      </div>
+      <div class="hero-badges">
+        <span>Productos para rituales</span>
+        <span>Estética lila & dorado</span>
+      </div>
+    </div>
+
+    <div class="hero-showcase">
+      <img src="assets/diario_1.png" alt="Portada Diario de Gratitud Mujeres Millonarias">
+      <div class="floating-card">
+        <strong>Diario de Gratitud</strong>
+        <small>Rutina diaria + manifestación</small>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section id="diario" class="section diary-section">
+      <span class="eyebrow center">Diario de Gratitud</span>
+      <h2>Recorré todas las páginas del Diario de gratitud</h2>
+      <p class="section-text">
+        Mirá el interior del diario antes de comprarlo. Incluye guía de uso, meta del mes,
+        afirmaciones, tareas, emociones, análisis semanal y espacios para escribir.
+      </p>
+
+      <div class="page-gallery">
+        <button class="gallery-btn" id="prevPage" aria-label="Página anterior">‹</button>
+        <div class="page-frame">
+          <img id="diaryPage" src="assets/diario_1.png" alt="Página del diario">
+        </div>
+        <button class="gallery-btn" id="nextPage" aria-label="Página siguiente">›</button>
+      </div>
+      <p class="gallery-caption" id="galleryCaption">Página 1 de 8 · Portada</p>
+      <div class="dots" id="dots"></div>
+    </section>
+
+    <section id="productos" class="section products-section">
+      <span class="eyebrow center">Tienda</span>
+      <h2>Productos Mujeres Millonarias</h2>
+      <p class="section-text">
+        Armá tu compra con el diario, la taza, la vela de lavanda, los stickers o el box completo.
+      </p>
+      <div class="products-grid" id="productList"></div>
+    </section>
+
+    <section class="section experience">
+      <div class="experience-card">
+        <div>
+          <span class="eyebrow">Experiencia completa</span>
+          <h2>Un momento para vos, todos los días.</h2>
+          <p>
+            Prendé tu vela de lavanda, prepará tu taza favorita, abrí tu diario y escribí
+            una intención. Este ritual está pensado para que vuelvas a tu centro y recuerdes
+            que merecés una vida grande, abundante y alineada.
+          </p>
+        </div>
+        <img src="assets/box.png" alt="Box Mujeres Millonarias">
+      </div>
+    </section>
+
+    <section id="testimonios" class="section testimonials">
+      <span class="eyebrow center">Testimonios</span>
+      <h2>Lo que sienten nuestras clientas</h2>
+
+      <div class="testimonial-grid">
+        <article class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p>“Empecé a usar el diario todas las mañanas y me ayudó a ordenar mis pensamientos. Me encanta porque no es solo escribir: es sentarme conmigo misma y recordar todo lo bueno que ya tengo.”</p>
+          <strong>Camila R.</strong>
+        </article>
+
+        <article class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p>“La vela con aroma a lavanda es hermosa. La uso cuando escribo mis afirmaciones y me cambia totalmente la energía del ambiente. Se siente delicada, femenina y muy de marca premium.”</p>
+          <strong>Sofía M.</strong>
+        </article>
+
+        <article class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p>“Compré la taza y los stickers para mi escritorio. Cada vez que los veo me acuerdo de enfocarme en mis metas. Es un detalle simple, pero me motiva muchísimo.”</p>
+          <strong>Valentina G.</strong>
+        </article>
+
+        <article class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p>“El box me pareció ideal para regalar. Llegó con una estética muy linda y el mensaje de Mujeres Millonarias es súper inspirador. Es un regalo con intención.”</p>
+          <strong>Florencia P.</strong>
+        </article>
+
+        <article class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p>“El diario me ayudó a ser más constante con mis metas. Me gusta que tenga espacios para agradecer, escribir tareas y revisar cómo me siento.”</p>
+          <strong>Martina L.</strong>
+        </article>
+
+        <article class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p>“La plancha de stickers es divina. La pegué en mi termo y en la compu. Queda súper estética y tiene frases que te levantan el ánimo.”</p>
+          <strong>Agustina V.</strong>
+        </article>
+      </div>
+    </section>
+
+    <section id="carrito" class="section cart-section">
+      <span class="eyebrow">Finalizá tu compra</span>
+      <h2>Tu carrito</h2>
+
+      <div id="cartItems" class="cart-items">
+        <p class="empty">Tu carrito está vacío.</p>
+      </div>
+
+      <div class="cart-total">
+        <span>Total</span>
+        <strong id="cartTotal">$0</strong>
+      </div>
+
+      <button class="btn primary full" id="checkoutBtn">Comprar</button>
+      <p class="note">
+        Al tocar comprar, primero se abrirá una ventana para completar los datos de entrega.
+      </p>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="customerModal">
+    <div class="modal">
+      <button class="modal-close" id="closeModal" aria-label="Cerrar">×</button>
+      <span class="eyebrow">Datos de compra</span>
+      <h2>Completá tus datos</h2>
+      <p class="modal-subtitle">Los necesitamos para preparar tu pedido y coordinar la entrega.</p>
+
+      <form id="customerForm">
+        <div class="form-grid">
+          <label>Nombre
+            <input type="text" id="firstName" required placeholder="Ej: Marina">
+          </label>
+
+          <label>Apellido
+            <input type="text" id="lastName" required placeholder="Ej: Casal">
+          </label>
+
+          <label>Mail
+            <input type="email" id="email" required placeholder="tuemail@gmail.com">
+          </label>
+
+          <label>Celular
+            <input type="tel" id="phone" required placeholder="11 1234 5678">
+          </label>
+
+          <label class="wide">Calle
+            <input type="text" id="street" required placeholder="Ej: Av. Mitre">
+          </label>
+
+          <label>Número
+            <input type="text" id="number" required placeholder="Ej: 1234">
+          </label>
+
+          <label>Localidad
+            <input type="text" id="city" required placeholder="Ej: Munro">
+          </label>
+
+          <label>Código postal
+            <input type="text" id="zip" required placeholder="Ej: 1605">
+          </label>
+        </div>
+
+        <button class="btn primary full" type="submit">Continuar al pago</button>
+        <p class="note">Luego conectamos este paso con Mercado Pago para cobrar en tu cuenta.</p>
+      </form>
+    </div>
+  </div>
+
+  <a class="whatsapp" href="https://wa.me/5491100000000" target="_blank" aria-label="WhatsApp">💬</a>
+
+  <footer>
+    <p>♕ Mujeres Millonarias · Hecho con amor para mujeres que sueñan en grande</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
