@@ -50,6 +50,8 @@ const products = [
 let currentPage = 0;
 let cart = [];
 
+const BACKEND_URL = "https://mujeresmillonarias.onrender.com";
+
 const formatARS = value => new Intl.NumberFormat("es-AR", {
   style: "currency",
   currency: "ARS",
@@ -111,11 +113,8 @@ function addToCart(productId) {
   const quantity = Math.max(1, parseInt(document.getElementById(`qty-${productId}`).value || "1", 10));
 
   const existing = cart.find(item => item.id === productId);
-  if (existing) {
-    existing.quantity += quantity;
-  } else {
-    cart.push({ ...product, quantity });
-  }
+  if (existing) existing.quantity += quantity;
+  else cart.push({ ...product, quantity });
 
   renderCart();
   document.getElementById("carrito").scrollIntoView({ behavior: "smooth" });
@@ -201,23 +200,27 @@ document.getElementById("customerForm").addEventListener("submit", async event =
     total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   };
 
-  console.log("Pedido listo:", order);
-
-  /*
-    CUANDO TENGAS MERCADO PAGO:
-    Reemplazá el alert por este fetch hacia tu backend.
-
-    const response = await fetch("http://localhost:3000/crear-preferencia", {
+  try {
+    const response = await fetch(`${BACKEND_URL}/crear-preferencia`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(order)
     });
 
     const data = await response.json();
-    if (data.init_point) window.location.href = data.init_point;
-  */
 
-  alert(`Gracias ${customer.nombre}. Tus datos fueron cargados. Ahora falta conectar Mercado Pago para cobrar.`);
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      alert("No se pudo iniciar el pago. Revisá Render o Mercado Pago.");
+      console.error(data);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Hubo un problema al conectar con Mercado Pago.");
+  }
 });
 
 renderDots();
