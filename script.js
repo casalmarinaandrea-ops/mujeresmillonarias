@@ -227,3 +227,4 @@ renderDots();
 updateDiaryPage();
 renderProducts();
 renderCart();
+
